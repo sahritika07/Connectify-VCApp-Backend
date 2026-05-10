@@ -22,25 +22,25 @@ const rooms= {};
 io.on("connection", (socket) => {
     console.log("User Connected:", socket.id);
 
-    socket.on("join-room", (roomId) => {
-        socket.join(roomId);
+    socket.on("join-room", (roomId) => {       // new id joins
+        socket.join(roomId);   
 
-        if(!rooms[roomId]) rooms[roomId] = [];
+        if(!rooms[roomId]) rooms[roomId] = [];   // if no room , create new room and add user to that room
         rooms[roomId].push(socket.id);
 
         socket.emit(
             "all-users",
-            rooms[roomId].filter((id) => id !== socket.id)
+            rooms[roomId].filter((id) => id !== socket.id)  // send all other users in the room where new user has joined (except the new user itself)
         )
 
         // notify others 
-        socket.to(roomId).emit("user-joined", socket.id);
+        socket.to(roomId).emit("user-joined", socket.id);  //  notify all other users in the room that new user has joined (except the new user itself)
     });
 
     socket.on("offer", ({to, offer}) => {
         socket.to(to).emit("offer", {
             from: socket.id,
-            answer,
+            offer,
         });
     });
 
